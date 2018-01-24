@@ -31,7 +31,7 @@
 ##可是万一撒币了，关了电脑怎么办？
   若想使用 $ git reset --hard commit_id 命令回到“未来版本”时，必须找到该版本对应的commit id。可以使用
   git reflog 命令用来记录你的每一次命令
-
+ 
 7.Working Directory（工作区）：就是电脑里能看到的目录
   Repository（版本库）：工作区有一个隐藏目录 .git，这个不算工作区，而是Git的版本库。里面存了很多重要的东西，最重要的为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支master（唯一的），以及指向master的一个指针叫HEAD。
   ----->往库里添加文件，第一步：git add 其实把文件添加到了暂存区；第二步：git commit其实把暂存区的所有内容提交到当前分支
