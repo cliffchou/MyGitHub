@@ -10,3 +10,12 @@
 3.git remote add origin git@github.com:GitHub_name/local_gitname.git：将本地的仓库与远程库相关联
   git push -u origin master：把本地库的所有内容推送到远程库上，这里实际是把当前分支master推送到远程（由于远程库是空的，第一次推送master分支时加上 -u 参数）
   小结：在本地工作完全不需要考虑远程库的存在，也就是没有互联网也可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络时，再把本地文本推送一下就完成了同步，很是方便！
+  
+4.从远程库克隆：
+  1)创建远程库
+  2)在目标目录下使用 git clone 命令克隆生成一个本地库：
+    $ git clone git@git@github.com:cliffchou/gitskills.git     这里cliffchou是你自己的GitHub帐户名，保证你在本地关联的是自己的远程库。gitskills是你的远程库名，而git@git@github.com:cliffchou/gitskills.git就是你的远程GitHub给出的地址，也可以用https地址，协议不同而已。
+	
+  注意：clone一个仓库，就必须知道仓库的地址，然后使用 git clone 命令克隆。Git支持多种协议，包括https，但是通过ssh支持的原生git协议速度最快
+
+5.
