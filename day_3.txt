@@ -1,0 +1,122 @@
+1.当手头工作没有完成却还要去修复bug，而且你还不想现在提交工作，可以使用Bug分支来处理该问题。
+  1) git sbash 把当前的工作现场隐藏起来，等以后恢复现场后继续工作
+  2) 然后确定要在哪个分支上修复bug，假定需要在master上修复，则从master上创建临时分支
+  3) 修复完成后，切换到master分支，并完成合并，最后删除该分支
+  4) git stash list 用来查看刚才隐藏的工作现场
+     git stash apply 恢复工作现场，但是恢复后，stash内容并不会删除
+	 git stash drop 删除存储工作现场的stash内容 
+	 git stash pop 恢复工作现场的同时删除stash内容
+
+  注意：你也可以多次stash，恢复的时候，先用 git stash list 察看，然后恢复指定的stash，用命令 $git stash apply stash@{0}
+  
+2.在合并到master分支上去之前，突然不需要这个功能了，需要立即就地销毁，直接使用 git branch -d feature-vulcan 会销毁失败（提示该分支还没有被合并），如果要强行删除，可以用以下命令
+  git branch -D feature-vulcan 强行删除一波没有合并的分支
+  注意：倘若你没有切换到别的分支，是无法强行删除你现在正所处的分支
+  
+3.git remote  查看远程库的信息
+  git remote -v 显示更详细的信息（显示可以抓取和推送的origin地址，如果没有推送权限，就看不到push的地址）
+  
+  git push origin master 推送分支（就是把该分支上的所有本地提交推送到远程库），推送时需要指定本地分支，如此Git会把该分支推送到远程库对应的远程分支上。
+  注意：分支推送与否，如master是主分支，因此需要时刻与远程同步，而dev是开发分支，团队所有成员需要在上面工作，也需要与远程同步，而bug分支只是本地修复bug，不必要推送（老板要看的话就另当别论了），而feature分支推送与否，就看你是否和你小伙伴共同开发。
+    
+  git checkout -b dev origin/dev 从远程库clone时，默认情况下只能看到本地的master分支（不信用git branch试试）。若要在dev分支上开发，就必须创建远程origin的dev分支到本地，即
+  git checkout -b dev origin/dev  
+   
+4.你的小伙伴已经向某个分支推送了某个文件，碰巧你也对同样的文件作了修改，并试图推送，当然是失败咯（因为你的小伙伴的最新提交和你试图推送的提交有冲突）。
+  解决：先 git pull 把最新的提交从origin/dev抓下来，然后在本地合并，解决冲突，再推送
+  注意：1)直接 git pull 会失败，因为没有指定本地 dev 分支和远程分支 origin/dev 分支的链接，设置如下（很奇怪，我的就也没出现pull失败的问题）
+          $git branch --set-upstream dev origin/dev
+		  再 pull 试试，没问题的
+		2)解决（合并）冲突：和分支管理中的解决冲突的方法完全一样
+		3)git pull 提示“no tracking information”, 则说明本地分支和远程分支的链接关系没有创建，用1)中命令来创建
+      
+5.Git的标签时版本库的快照，其实也就是指向某个commit的指针，因此创建和删除标签都是瞬时的（虽然有commit，但是其对应的是一串数字6a5819e...不是蛮好找，tag是个容易记住还有意义的名字，它和某个commit绑定在一起）
+  1)打标签：首先切换到需要打标签的分支上 
+            git branch 
+            git checkout master     
+            然后敲以下命令即可打一个新标签
+            git tag v1.0
+			
+			git tag 查看所有标签(注意标签是按照字母顺序排列的，不是时间顺序)
+  2)查看标签信息:git show <tagname> 
+ 			
+	注意：默认标签是打在最新提交的commit上面的(HEAD),也可以指定一个commit id
+  3)忘了打标签怎么弥补：找到历史提交的commit，然后打上即可
+    git log --pretty=oneline --abbrev-commit  比如版本号为cc17032 fix bug 101
+	git tag v0.9 cc17032 fix bug 101
+	
+  4)通过 -s 用私钥签名一个标签，签名采用GPG签名，因此首先必须安装gpg（GunPG），如果没有找到gpg密匙对就会报错
+	
+  5)git tag -d v0.1 删除标签（创建的标签存储在本地，不会自动推送到远程，可以放心安全删除）
+    git push origin v1.0 推送标签v1.0到远程
+	git tag origin --tags 一次性推送全部尚未推送到远程的本地标签
+    注意：倘若已经推送出去了，删除是先从本地删除 git tag -d <tagname>
+                                    再从远程删除 git push origin :refs/tags/v0.9 （删除命令原来也是 push ）	
+
+6.使用码云：已有一个本地的git仓库（例如名字为Learngit的本地库），以下方法可以将之关联到码云的远程库上
+  1)先在码云上创建一个新项目，项目名称最好和本地一样
+  2)git remote add origin git@gitee.com:cliffchou/Learngit.git 在本地库上使用此命令将它和码云的远程库相关联
+  3)可以正常使用 git push 和 git pull 推送了
+  
+  注意：当使用 git remote add 命令时报错，说明本地库已经关联了一个名叫origin的远程库
+        git remote -v  查看所关联的远程库信息
+		git remote rm origin 删除已有的GitHub远程库(origin远程库标识名)
+		git remote add origin git@gitee.com:cliffchou/myfirst_ropository 关联码云的远程库
+  
+  #关联不同的远程库：需要用不同的名称来标识远程库（即是git remote add origin git@gitee.com:cliffchou/myfirst_ropository这个命令中的origin,远程库标识名）
+  
+7.配置Git:
+  1) git config --global color.ui true 配置颜色
+  2) 在Git工作去的根目录下创建一个.gitignore文件，然后把要忽略的文件名填进去，然后将.gitignore文件提交给Git，Git就会自动忽略这些文件。
+     所以有时你想添加一个文件到Git，但是发现添加不了，原因可能就是该文件被.gitignore忽略了。这时若你想强行添加一波，可以用-f：
+	 git add -f App.class  在.gitignore文件忽略的前提下强行添加一波
+	 git check-ignore -v <filename> 检查.gitignore文件中到底哪里忽略了我要添加的这个文件
+	 
+	 注意：.gitignore文件本身是要放在版本库里的，所以你可以对.gitignore做版本管理
+	 
+8.配置别名：简化输入命令(global参数是全局参数，所以这些命令在这台电脑的所有Git仓库下都有用)
+  $git config --global alias.st status 告诉Git，以后st就表示status
+  $git config --global alias.co checkout 告诉Git，以后co就表示checkout
+  $git config --global alias.ci commit 告诉Git，以后ci就表示commit
+  $git config --global alias.br branch 告诉Git，以后br就表示branch
+  $git config --global alias.unstage 'reset HEAD' 告诉Git，以后unstage表示撤销修改操作（把暂存区的修改撤销掉，重新放回工作区）
+  $git config --global alias.last 'log -1' 配置git last，让其显示最后一次的提交信息
+  
+  大神操作：
+  git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+	 
+  注意：加上 --global 是针对当前用户起作用的，如果不加，那只针对当前的仓库起作用。
+        每个仓库的配置文件都放在.git/config文件中，你可以直接进去删改; 
+		那个用户的配置文件放在用户主目录下的一个隐藏文件.gitconfig中
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  

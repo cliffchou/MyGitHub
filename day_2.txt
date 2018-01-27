@@ -5,7 +5,10 @@
   2）git commit -m "***"
 
   如果是删错了(前提是用 rm 命令进行删除的)，则版本库还有文件，因此可以轻松恢复到最新版本
-  git checkout -- filename: 利用版本库中的版本替换工作区的版本，无论是修改还是删除，均可以“一键还原”
+  git checkout -- filename: 利用版
+  
+  
+  本库中的版本替换工作区的版本，无论是修改还是删除，均可以“一键还原”
 
 3.git remote add origin git@github.com:GitHub_name/local_gitname.git：将本地的仓库与远程库相关联
   git push -u origin master：把本地库的所有内容推送到远程库上，这里实际是把当前分支master推送到远程（由于远程库是空的，第一次推送master分支时加上 -u 参数）
@@ -26,3 +29,31 @@
   git checkout -b <name> 创建+切换分支
   git merge <name> 合并某分支到当前分支
   git branch -d <name> 删除分支
+  
+6.当不同的分支各自分别有新的提交时，Git无法执行“快速合并”，只能尝试把各自的修改合并起来，但是这种合并可能会有冲突。
+  $git log --graph --pretty=oneline --abbrev-commit  查看分支的合并情况
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
